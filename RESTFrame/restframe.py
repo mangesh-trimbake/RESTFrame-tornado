@@ -3,6 +3,7 @@ import sys
 import os
 import shutil
 import datetime
+import re
 
 class RestFrame:
 	"""docstring for ClassName"""
@@ -15,7 +16,7 @@ class RestFrame:
 		model_names = self.get_model_names()
 		model_name = self.get_model_name()
 
-		print(ModelNames,ModelName,model_names,model_name)
+		# print(ModelNames,ModelName,model_names,model_name)
 		src_file = "./res/handlers/ModelsHandler.py"
 		dst_file = path + ""+ModelNames + "Handler.py"
 
@@ -25,18 +26,28 @@ class RestFrame:
 		with open(dst_file, 'r') as file:
 		  filedata = file.read()
 
-		print(filedata)
+		# print(filedata)
 
 		# Replace the target string
-		filedata.replace('ModelNames', ModelNames)
-		filedata.replace('ModelName', ModelName)
-		filedata.replace('model_names', model_names)
-		filedata.replace('model_name', model_name)
+		# filedata.replace(r"ModelNames.+", ModelNames)
+		# filedata.replace('ModelName', ModelName)
+		# filedata.replace('model_names', model_names)
+		# filedata.replace('model_name', model_name)
+
+
 		
-		print(filedata)
+		# print(re.findall("ModelNames.+", filedata))
+
+		replaced = re.sub(r"ModelNames", ModelNames, filedata)
+		replaced = re.sub(r"ModelName", ModelName, replaced)
+		replaced = re.sub(r"model_names", model_names, replaced)
+		replaced = re.sub(r"model_name", model_name, replaced)
+
+		# print(replaced)
+
 		# Write the file out again
 		with open(dst_file, 'w') as file:
-		  file.write(filedata)
+		  file.write(replaced)
 
 		print(ModelNames + "Handler.py created")
 
