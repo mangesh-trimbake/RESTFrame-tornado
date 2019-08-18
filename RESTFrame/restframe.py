@@ -1,5 +1,5 @@
 import sys
-
+import errno
 import os
 import shutil
 import datetime
@@ -9,18 +9,32 @@ class RestFrame:
 	"""docstring for ClassName"""
 	def __init__(self, arg):
 		self.model_table = arg
+		self.ModelNames = ""
+		self.ModelName = ""
+		self.model_names = ""
+		self.model_name = ""
 
 	def creatHandler(self,path):
-		ModelNames = self.getModelNames()
-		ModelName = self.getModelName()
-		model_names = self.get_model_names()
-		model_name = self.get_model_name()
+		self.ModelNames = self.getModelNames()
+		self.ModelName = self.getModelName()
+		self.model_names = self.get_model_names()
+		self.model_name = self.get_model_name()
 
 		# print(ModelNames,ModelName,model_names,model_name)
 		src_file = "./res/handlers/ModelsHandler.py"
-		dst_file = path + ""+ModelNames + "Handler.py"
+		dst_file = path + ""+self.ModelNames + "Handler.py"
 
-		shutil.copy(src_file,dst_file)
+		# shutil.copy(src_file,dst_file)
+		try:
+		    shutil.copy(src_file, dst_file)
+		except IOError as e:
+		    # ENOENT(2): file does not exist, raised also on missing dest parent dir
+		    if e.errno != errno.ENOENT:
+		        raise
+		    # try creating parent directories
+		    os.makedirs(os.path.dirname(dst_file))
+		    shutil.copy(src_file, dst_file)
+		    print(dst_file)
 
 		filedata = None
 		with open(dst_file, 'r') as file:
@@ -38,10 +52,10 @@ class RestFrame:
 		
 		# print(re.findall("ModelNames.+", filedata))
 
-		replaced = re.sub(r"ModelNames", ModelNames, filedata)
-		replaced = re.sub(r"ModelName", ModelName, replaced)
-		replaced = re.sub(r"model_names", model_names, replaced)
-		replaced = re.sub(r"model_name", model_name, replaced)
+		replaced = re.sub(r"ModelNames", self.ModelNames, filedata)
+		replaced = re.sub(r"ModelName", self.ModelName, replaced)
+		replaced = re.sub(r"model_names", self.model_names, replaced)
+		replaced = re.sub(r"model_name", self.model_name, replaced)
 
 		# print(replaced)
 
@@ -49,7 +63,7 @@ class RestFrame:
 		with open(dst_file, 'w') as file:
 		  file.write(replaced)
 
-		print(ModelNames + "Handler.py created")
+		print(self.ModelNames + "Handler.py created")
 
 
 	def getModelNames(self):
@@ -82,6 +96,17 @@ class RestFrame:
 
 		return ModelNames
 
+	def getRoutes(self):
+		route = self.model_table
+		route = route.replace("_","-")
+
+		print('(r"/'+route+'", '+self.ModelNames+"),")		
+		print('(r"/'+route+'/add", '+self.ModelNames+"Add"+"),")
+		print('(r"/'+route+'/([^/]+)", '+self.ModelNames+"Show"+"),")
+		print('(r"/'+route+'/update/([^/]+)", '+self.ModelNames+"Update"+"),")
+
+
+
 		
 
 
@@ -90,4 +115,11 @@ if __name__ == '__main__':
 	second_args = sys.argv[2]
 	if(str(first_args) == "rest"):
 		rest_frame = RestFrame(second_args)
-		rest_frame.creatHandler("../Controllers/")
+		# print(len(sys.argv))
+		if(len(sys.argv)>=4):
+			controller_path = "../Controllers/" + sys.argv[3]+ "/"
+		else:
+			controller_path = "../Controllers/"
+		rest_frame.creatHandler(controller_path)
+
+		rest_frame.getRoutes()
