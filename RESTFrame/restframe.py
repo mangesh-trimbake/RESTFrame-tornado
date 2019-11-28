@@ -20,7 +20,7 @@ class RestFrame:
 		self.model_names = self.get_model_names()
 		self.model_name = self.get_model_name()
 
-		# print(ModelNames,ModelName,model_names,model_name)
+		# print(self.ModelNames,self.ModelName,self.model_names,self.model_name)
 		src_file = "./res/handlers/ModelsHandler.py"
 		dst_file = path + ""+self.ModelNames + "Handler.py"
 
@@ -49,7 +49,7 @@ class RestFrame:
 		# filedata.replace('model_name', model_name)
 
 
-		
+
 		# print(re.findall("ModelNames.+", filedata))
 
 		replaced = re.sub(r"ModelNames", self.ModelNames, filedata)
@@ -76,8 +76,8 @@ class RestFrame:
 		ModelNames = self.model_table
 		ModelNames = ModelNames.split("_")
 		ModelNames = "".join(w.capitalize() for w in ModelNames)
-		if(ModelNames[:-3] =="ies"):
-			ModelNames[0:-3]+"y"
+		if(ModelNames[-3:] =="ies"):
+			ModelNames = ModelNames[0:-3]+"y"
 		else:
 			ModelNames = ModelNames[0:-1]
 
@@ -100,14 +100,14 @@ class RestFrame:
 		route = self.model_table
 		route = route.replace("_","-")
 
-		print('(r"/'+route+'", '+self.ModelNames+"),")		
+		print('(r"/'+route+'", '+self.ModelNames+"),")
 		print('(r"/'+route+'/add", '+self.ModelNames+"Add"+"),")
 		print('(r"/'+route+'/([^/]+)", '+self.ModelNames+"Show"+"),")
 		print('(r"/'+route+'/update/([^/]+)", '+self.ModelNames+"Update"+"),")
 
 
 
-		
+
 
 
 if __name__ == '__main__':
