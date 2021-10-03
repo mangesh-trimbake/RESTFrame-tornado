@@ -12,11 +12,11 @@ Base = declarative_base()
 
 Base.metadata.create_all(engine) # this create the table changes
 
-session.query(model_name).all() # select query
+session.query(model_name).all()  # select query
 
 ```
 
-## SQLAlchmey scoped session with query_property
+## SQLAlchmey scoped session & model with query_property
 ```
 #approch 2nd
 
@@ -29,10 +29,34 @@ Base = declarative_base(cls=model_class)
 
  
 Base.metadata.create_all(engine) # this create the table changes
-Base.metadat.bind = engine # this will bind engine for query_property excuation on model
+                                 # or
+Base.metadat.bind = engine       # this will bind engine for query_property excuation on model
+Base.metadata.create_all(engine)
+
+session.query(model_name).all()  # select query 1st approch
+model_name.all()                 # select query 2nd approch
+
+```
+
+## SQLAlchmey scoped session, model with query_property & initialize engine later
+```
+#approch 3rd
+
+session = scoped_session(sessionmaker())
+
+model_class.query = session.query_property()
+Base = declarative_base(cls=model_class)
+
+
+engine = create_engine("msql_url")
+ 
+Base.metadat.bind = engine      # this will bind engine for query_property excuation on model
+session.configure(bind=engine)  # this will bind engine to session
+
+Base.metadata.create_all()      # this create the table changes
 
 session.query(model_name).all() # select query 1st approch
-model_name.all() # select query 2nd approch
+model_name.all()                # select query 2nd approch
 
 ```
 
