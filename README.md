@@ -1,6 +1,6 @@
-##SQLAlchmey Integration
+# SQLAlchmey Integration
 
-# SQLAlchmey Basics
+## SQLAlchmey Basics
 ```
 #approch 1st
 
@@ -16,7 +16,7 @@ session.query(model_name).all() # select query
 
 ```
 
-# SQLAlchmey scoped session with query_property
+## SQLAlchmey scoped session with query_property
 ```
 #approch 2nd
 
@@ -29,7 +29,7 @@ Base = declarative_base(cls=model_class)
 
  
 Base.metadata.create_all(engine) # this create the table changes
-Base.metadat.bind = engine
+Base.metadat.bind = engine # this will bind engine for query_property excuation on model
 
 session.query(model_name).all() # select query 1st approch
 model_name.all() # select query 2nd approch
