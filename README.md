@@ -31,7 +31,7 @@ Base = declarative_base(cls=model_class)
 Base.metadata.create_all(engine) # this create the table changes
                                  # or
 Base.metadat.bind = engine       # this will bind engine for query_property excuation on model
-Base.metadata.create_all(engine)
+Base.metadata.create_all()
 
 session.query(model_name).all()  # select query 1st approch
 model_name.all()                 # select query 2nd approch
