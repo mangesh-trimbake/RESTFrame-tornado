@@ -42,7 +42,7 @@ model_name.all()                 # select query 2nd approch
 ```
 #approch 3rd
 
-session = scoped_session(sessionmaker())
+session = scoped_session(sessionmaker()) # not binding engine, will bind later
 
 model_class.query = session.query_property()
 Base = declarative_base(cls=model_class)
